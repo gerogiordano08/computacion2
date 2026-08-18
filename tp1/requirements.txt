@@ -1,0 +1,4 @@
+# Este proyecto usa solo la biblioteca estandar de Python.
+# Se conserva este archivo para mantener el flujo pedido por la catedra:
+#   pip install -r requirements.txt
+# y para dejar explicito que no hay dependencias externas de Python.
