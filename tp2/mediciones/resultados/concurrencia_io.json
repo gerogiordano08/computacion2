@@ -1,0 +1,71 @@
+{
+  "medicion": "concurrencia_io",
+  "entorno": {
+    "fecha_utc": "2026-11-02T21:32:44.670034+00:00",
+    "python": "3.13.18",
+    "sistema": "Linux-6.12.76-linuxkit-aarch64-with-glibc2.41",
+    "cpu_logicas_visibles": 3,
+    "paquetes": {
+      "fastapi": "0.162.0",
+      "uvicorn": "0.54.0",
+      "httpx": "0.28.1",
+      "pydantic": "2.14.2"
+    },
+    "cpu.max": "max 100000",
+    "memory.max": "max"
+  },
+  "condiciones": {
+    "cantidad_descargas": 20,
+    "repeticiones": 3,
+    "origen": "servidor local controlado",
+    "urls": [
+      "http://127.0.0.1:45973/archivo/0",
+      "http://127.0.0.1:45973/archivo/1",
+      "http://127.0.0.1:45973/archivo/2",
+      "http://127.0.0.1:45973/archivo/3",
+      "http://127.0.0.1:45973/archivo/4",
+      "http://127.0.0.1:45973/archivo/5",
+      "http://127.0.0.1:45973/archivo/6",
+      "http://127.0.0.1:45973/archivo/7",
+      "http://127.0.0.1:45973/archivo/8",
+      "http://127.0.0.1:45973/archivo/9",
+      "http://127.0.0.1:45973/archivo/10",
+      "http://127.0.0.1:45973/archivo/11",
+      "http://127.0.0.1:45973/archivo/12",
+      "http://127.0.0.1:45973/archivo/13",
+      "http://127.0.0.1:45973/archivo/14",
+      "http://127.0.0.1:45973/archivo/15",
+      "http://127.0.0.1:45973/archivo/16",
+      "http://127.0.0.1:45973/archivo/17",
+      "http://127.0.0.1:45973/archivo/18",
+      "http://127.0.0.1:45973/archivo/19"
+    ],
+    "demora_local_segundos": 0.2,
+    "limite_escenario_segundos": 30,
+    "alcance": "Función descargar del proyecto, sin API ni cola",
+    "secuencial": "Una llamada a descargar por URL, esperando cada resultado",
+    "concurrente": "Una llamada a descargar con todas las URLs",
+    "nota": "Incluye creación de clientes: uno por llamada a descargar. HTTPX conserva su timeout de red predeterminado."
+  },
+  "secuencial_segundos": {
+    "muestras": [
+      4.369560127,
+      4.350004251999962,
+      4.3694487930000605
+    ],
+    "promedio": 4.363004390666674,
+    "mediana": 4.3694487930000605,
+    "p95": 4.369560127
+  },
+  "concurrente_segundos": {
+    "muestras": [
+      0.26234824999994544,
+      0.2424103749999631,
+      0.25291279099997155
+    ],
+    "promedio": 0.2525571386666267,
+    "mediana": 0.25291279099997155,
+    "p95": 0.26234824999994544
+  },
+  "speedup_medianas": 17.276503792963766
+}

@@ -39,6 +39,7 @@ class GestorTareas:
         self.cola: asyncio.Queue[UUID] = asyncio.Queue()
         self.workers: list[asyncio.Task] = []
         self.ejecuciones_activas: dict[UUID, asyncio.Task] = {}
+        self.finalizaciones: dict[UUID, asyncio.Event] = {}
 
         self.executor: ProcessPoolExecutor | None = None
         self.aceptando_tareas = False
@@ -156,6 +157,7 @@ class GestorTareas:
                 tarea.estado = EstadoTarea.EJECUTANDO
                 tarea.iniciada_en = datetime.now(timezone.utc)
 
+                self.finalizaciones[tarea.id] = asyncio.Event()
                 ejecucion = asyncio.create_task(
                     self._ejecutar(tarea.entrada)
                 )
@@ -187,6 +189,7 @@ class GestorTareas:
                 finally:
                     tarea.finalizada_en = datetime.now(timezone.utc)
                     self.ejecuciones_activas.pop(tarea.id, None)
+                    self.finalizaciones.pop(tarea.id).set()
 
             finally:
                 self.cola.task_done()
@@ -320,12 +323,11 @@ class GestorTareas:
 
         elif tarea.estado == EstadoTarea.EJECUTANDO:
             ejecucion = self.ejecuciones_activas[tarea_id]
+            finalizacion = self.finalizaciones[tarea_id]
             if not ejecucion.done() and not ejecucion.cancelling():
                 ejecucion.cancel()
 
-            await asyncio.gather(
-                ejecucion,
-                return_exceptions=True,
-            )
+            # El worker confirma el estado y la limpieza antes de responder.
+            await finalizacion.wait()
 
         return tarea

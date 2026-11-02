@@ -1,0 +1,103 @@
+{
+  "medicion": "bloqueo_loop",
+  "entorno": {
+    "fecha_utc": "2026-11-02T21:33:09.705496+00:00",
+    "python": "3.13.18",
+    "sistema": "Linux-6.12.76-linuxkit-aarch64-with-glibc2.41",
+    "cpu_logicas_visibles": 3,
+    "paquetes": {
+      "fastapi": "0.162.0",
+      "uvicorn": "0.54.0",
+      "httpx": "0.28.1",
+      "pydantic": "2.14.2"
+    },
+    "cpu.max": "max 100000",
+    "memory.max": "max"
+  },
+  "condiciones": {
+    "iteraciones": 5000000,
+    "repeticiones": 3,
+    "workers": 4,
+    "procesos_cpu_configurados": 2,
+    "timeout_segundos": 120,
+    "alcance": "Dos APIs aisladas; no modifica la API principal",
+    "sin_executor": "Mismo hash y señal, ejecutado en el event loop",
+    "sincronizacion": "GET enviado después de la marca de inicio del cálculo"
+  },
+  "sin_executor": {
+    "muestras": [
+      {
+        "repeticion": 1,
+        "get_segundos": 1.2477020430000039,
+        "hash_segundos": 1.2484593759999143,
+        "ejecucion_tarea_segundos": 1.249926,
+        "estado_al_responder_get": "completada",
+        "hash": "16b37ac1baa0f9a1cd91bf14fdea93757893ce71b7f4da89f3ab5529ed5a9b66"
+      },
+      {
+        "repeticion": 2,
+        "get_segundos": 1.3138197509999827,
+        "hash_segundos": 1.313034583999979,
+        "ejecucion_tarea_segundos": 1.315027,
+        "estado_al_responder_get": "completada",
+        "hash": "16b37ac1baa0f9a1cd91bf14fdea93757893ce71b7f4da89f3ab5529ed5a9b66"
+      },
+      {
+        "repeticion": 3,
+        "get_segundos": 1.300909334000039,
+        "hash_segundos": 1.3010614180000175,
+        "ejecucion_tarea_segundos": 1.302773,
+        "estado_al_responder_get": "completada",
+        "hash": "16b37ac1baa0f9a1cd91bf14fdea93757893ce71b7f4da89f3ab5529ed5a9b66"
+      }
+    ],
+    "latencia_get_segundos": {
+      "muestras": [
+        1.2477020430000039,
+        1.3138197509999827,
+        1.300909334000039
+      ],
+      "promedio": 1.2874770426666753,
+      "mediana": 1.300909334000039,
+      "p95": 1.3138197509999827
+    }
+  },
+  "con_executor": {
+    "muestras": [
+      {
+        "repeticion": 1,
+        "get_segundos": 0.00038862499991410004,
+        "hash_segundos": 1.2588247090000095,
+        "ejecucion_tarea_segundos": 1.26082,
+        "estado_al_responder_get": "ejecutando",
+        "hash": "16b37ac1baa0f9a1cd91bf14fdea93757893ce71b7f4da89f3ab5529ed5a9b66"
+      },
+      {
+        "repeticion": 2,
+        "get_segundos": 0.0003754159999971307,
+        "hash_segundos": 1.2634091669999634,
+        "ejecucion_tarea_segundos": 1.265513,
+        "estado_al_responder_get": "ejecutando",
+        "hash": "16b37ac1baa0f9a1cd91bf14fdea93757893ce71b7f4da89f3ab5529ed5a9b66"
+      },
+      {
+        "repeticion": 3,
+        "get_segundos": 0.0003549169999814694,
+        "hash_segundos": 1.2619509170000356,
+        "ejecucion_tarea_segundos": 1.263777,
+        "estado_al_responder_get": "ejecutando",
+        "hash": "16b37ac1baa0f9a1cd91bf14fdea93757893ce71b7f4da89f3ab5529ed5a9b66"
+      }
+    ],
+    "latencia_get_segundos": {
+      "muestras": [
+        0.00038862499991410004,
+        0.0003754159999971307,
+        0.0003549169999814694
+      ],
+      "promedio": 0.00037298599996423337,
+      "mediana": 0.0003754159999971307,
+      "p95": 0.00038862499991410004
+    }
+  }
+}

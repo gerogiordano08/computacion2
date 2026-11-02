@@ -17,20 +17,20 @@ class EstadoTarea(str, Enum):
 class DescargarEntrada(BaseModel):
     tipo: Literal["descargar"]
     urls: list[HttpUrl] = Field(min_length=1)
-    timeout: float = Field(default=30, gt=0)
+    timeout: float = Field(default=30, gt=0, allow_inf_nan=False)
 
 
 class HashearEntrada(BaseModel):
     tipo: Literal["hashear"]
     texto: str
     iteraciones: int = Field(gt=0)
-    timeout: float = Field(default=30, gt=0)
+    timeout: float = Field(default=30, gt=0, allow_inf_nan=False)
 
 
 class EsperarEntrada(BaseModel):
     tipo: Literal["esperar"]
-    segundos: float = Field(ge=0)
-    timeout: float = Field(default=30, gt=0)
+    segundos: float = Field(ge=0, allow_inf_nan=False)
+    timeout: float = Field(default=30, gt=0, allow_inf_nan=False)
 
 
 class Tarea(BaseModel):
