@@ -210,12 +210,45 @@ class GestorTareas:
             "cantidad_workers": self.cantidad_workers,
         }
 
-    async def detener(self):
+    async def detener(
+        self,
+        plazo: float = 20,
+        directorio: str = "/app/estados",
+    ):
         self.aceptando_tareas = False
 
-        # En esta versión esperamos todas las tareas sin límite.
-        await self.cola.join()
+        # Evitamos que comiencen las tareas pendientes.
+        for tarea in self.tareas.values():
+            if tarea.estado == EstadoTarea.PENDIENTE:
+                tarea.estado = EstadoTarea.CANCELADA
+                tarea.finalizada_en = datetime.now(timezone.utc)
 
+        try:
+            # Los workers saltean las pendientes canceladas y terminan
+            # las que ya estaban ejecutándose.
+            await asyncio.wait_for(
+                self.cola.join(),
+                timeout=plazo,
+            )
+
+        except TimeoutError:
+            logger.info(
+                "Plazo de apagado agotado; cancelando tareas activas"
+            )
+
+            ids_activos = list(self.ejecuciones_activas)
+
+            await asyncio.gather(
+                *(
+                    self.cancelar_tarea(tarea_id)
+                    for tarea_id in ids_activos
+                )
+            )
+
+            # Esperamos también la actualización de estados y task_done().
+            await self.cola.join()
+
+        # Ya no quedan trabajos por atender.
         for worker in self.workers:
             worker.cancel()
 
@@ -231,11 +264,36 @@ class GestorTareas:
                 wait=True,
             )
             self.executor = None
+
         if self.manager is not None:
             await asyncio.to_thread(self.manager.shutdown)
             self.manager = None
 
+        # Guardamos el estado cuando las ejecuciones ya finalizaron.
+        def guardar_estado():
+            carpeta = Path(directorio)
+            carpeta.mkdir(parents=True, exist_ok=True)
 
+            timestamp = datetime.now(timezone.utc).strftime(
+                "%Y%m%dT%H%M%S_%fZ"
+            )
+            archivo = carpeta / f"estado_{timestamp}.json"
+
+            datos = [
+                tarea.model_dump(mode="json")
+                for tarea in self.tareas.values()
+            ]
+
+            archivo.write_text(
+                json.dumps(datos, ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+
+            return archivo
+
+        archivo = await asyncio.to_thread(guardar_estado)
+        logger.info("Estado guardado en %s", archivo)
+        
     async def cancelar_tarea(self, tarea_id: UUID) -> Tarea:
         tarea = self.obtener_tarea(tarea_id)
 
