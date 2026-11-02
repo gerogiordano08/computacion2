@@ -1,8 +1,10 @@
 import asyncio
+import json
 import logging
 import multiprocessing
 from concurrent.futures import ProcessPoolExecutor
 from datetime import datetime, timezone
+from pathlib import Path
 from uuid import UUID
 
 from .modelos import (
@@ -41,9 +43,24 @@ class GestorTareas:
         self.executor: ProcessPoolExecutor | None = None
         self.aceptando_tareas = False
 
-    async def iniciar(self):
+    async def iniciar(self, directorio: str = "/app/estados"):
         if self.executor is not None:
             raise RuntimeError("El gestor ya está iniciado")
+
+        def buscar_volcados():
+            return sorted(
+                archivo
+                for archivo in Path(directorio).glob("estado_*.json")
+                if archivo.is_file()
+            )
+
+        volcados = await asyncio.to_thread(buscar_volcados)
+        if volcados:
+            logger.info(
+                "Se encontraron %s volcados previos. Más reciente: %s",
+                len(volcados),
+                volcados[-1],
+            )
 
         contexto = multiprocessing.get_context("spawn")
 
