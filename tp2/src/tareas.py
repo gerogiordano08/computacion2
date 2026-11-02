@@ -36,11 +36,21 @@ async def descargar(entrada: DescargarEntrada):
     return resultado        
 
 
-def hashear(entrada: HashearEntrada):
+class HashCancelado(Exception):
+    pass
+
+
+def hashear(entrada: HashearEntrada, cancelacion):
     datos = entrada.texto.encode("utf-8")
 
-    for _ in range(entrada.iteraciones):
+    for numero in range(entrada.iteraciones):
+        if numero % 10_000 == 0 and cancelacion.is_set():
+            raise HashCancelado("Cálculo cancelado")
+
         datos = hashlib.sha256(datos).digest()
+
+    if cancelacion.is_set():
+        raise HashCancelado("Cálculo cancelado")
 
     return {
         "hash": datos.hex(),
