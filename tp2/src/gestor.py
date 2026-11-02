@@ -145,9 +145,16 @@ class GestorTareas:
                 self.ejecuciones_activas[tarea.id] = ejecucion
 
                 try:
-                    tarea.resultado = await ejecucion
-                    tarea.estado = EstadoTarea.COMPLETADA
+                    async with asyncio.timeout(tarea.entrada.timeout):
+                        tarea.resultado = await ejecucion
 
+                    tarea.estado = EstadoTarea.COMPLETADA
+                except TimeoutError:
+                    tarea.estado = EstadoTarea.FALLIDA
+                    tarea.error = (
+                        "Tiempo máximo de ejecución excedido: "
+                        f"{tarea.entrada.timeout} segundos"
+                    )
                 except asyncio.CancelledError:
                     tarea.estado = EstadoTarea.CANCELADA
 
